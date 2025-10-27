@@ -48,7 +48,7 @@ async function get_breeds() {
 	const response_breeds = Object.keys(json.message);
 	const breeds = [];
 	for (var i = 0; i < DOGS; i++) {
-		var index = Math.round(Math.random() * response_breeds.length);
+		var index = Math.round(Math.random() * (response_breeds.length - 1));
 		/*console.log(index);*/
 		var breed = response_breeds[index];
 		breeds.push(breed);
