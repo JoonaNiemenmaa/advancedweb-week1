@@ -30,11 +30,15 @@ async function create_wiki_item(container, breed) {
 	wiki_content.appendChild(img_container);
 
 	const url = `https://dog.ceo/api/breed/${breed}/images`;
-	const img = await (await fetch(url)).json();
+	const response = await (await fetch(url)).json();
+	const index = Math.round(Math.random() * (response.message.length - 1));
+	const image = response.message[index];
+
+	console.log(image);
 
 	const wiki_img = document.createElement("img");
 	wiki_img.classList.add("wiki-img");
-	wiki_img.src = img.message[0];
+	wiki_img.src = image;
 	img_container.appendChild(wiki_img);
 }
 
