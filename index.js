@@ -1,13 +1,14 @@
+const DOGS = 5;
 const containers = document.getElementsByClassName("container");
 
-function create_wiki_item(container) {
+async function create_wiki_item(container, breed) {
 	const wiki_item = document.createElement("div");
 	wiki_item.classList.add("wiki-item");
 
 	container.appendChild(wiki_item);
 
 	const header = document.createElement("h1");
-	header.innerText = "Breed X";
+	header.innerText = breed;
 	header.classList.add("wiki-header");
 
 	wiki_item.appendChild(header);
@@ -28,15 +29,34 @@ function create_wiki_item(container) {
 
 	wiki_content.appendChild(img_container);
 
+	const url = `https://dog.ceo/api/breed/${breed}/images`;
+	const img = await (await fetch(url)).json();
+
 	const wiki_img = document.createElement("img");
 	wiki_img.classList.add("wiki-img");
-	wiki_img.src = "";
-
+	wiki_img.src = img.message[0];
 	img_container.appendChild(wiki_img);
 }
 
-for (const container of containers) {
-	for (var i = 0; i < 5; i++) {
-		create_wiki_item(container);
+async function get_breeds() {
+	const url = "https://dog.ceo/api/breeds/list/all";
+	const json = await (await fetch(url)).json();
+	const response_breeds = Object.keys(json.message);
+	const breeds = [];
+	for (var i = 0; i < DOGS; i++) {
+		var index = Math.round(Math.random() * response_breeds.length);
+		/*console.log(index);*/
+		var breed = response_breeds[index];
+		breeds.push(breed);
 	}
+	console.log(breeds);
+	return breeds;
 }
+
+get_breeds().then((breeds) => {
+	for (const container of containers) {
+		for (const breed of breeds) {
+			create_wiki_item(container, breed);
+		}
+	}
+});
