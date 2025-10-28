@@ -1,6 +1,26 @@
 const DOGS = 5;
 const containers = document.getElementsByClassName("container");
 
+/*async function find_dog_link(body) {
+	let html = "";
+	for await (const chunk of body) {
+		for (const byte of chunk) {
+			html += String.fromCharCode(byte);
+		}
+	}
+
+	const base = document.createElement("html");
+
+	base.innerHTML = html;
+
+	const links = base.getElementsByTagName("a");
+
+	for (const link of links) {
+		console.log(link.href);
+		console.log(link.innerText);
+	}
+}*/
+
 async function create_wiki_item(container, breed) {
 	const wiki_item = document.createElement("div");
 	wiki_item.classList.add("wiki-item");
@@ -8,7 +28,8 @@ async function create_wiki_item(container, breed) {
 	container.appendChild(wiki_item);
 
 	const header = document.createElement("h1");
-	header.innerText = breed;
+	const header_text = breed[0].toUpperCase() + breed.slice(1);
+	header.innerText = header_text;
 	header.classList.add("wiki-header");
 
 	wiki_item.appendChild(header);
@@ -18,8 +39,19 @@ async function create_wiki_item(container, breed) {
 
 	wiki_item.appendChild(wiki_content);
 
+	const summary_url = `https://en.wikipedia.org/api/rest_v1/page/summary/${breed}`;
+	const json = await (await fetch(summary_url)).json();
+
+	/*if (json.type == "disambiguation") {
+		const html_url = `https://en.wikipedia.org/api/rest_v1/page/html/${breed}`;
+		const response = await fetch(html_url);
+		await find_dog_link(response.body);
+	}*/
+
+	const summary = json.extract;
+
 	const paragraph = document.createElement("p");
-	paragraph.innerText = "Some text about this breed.";
+	paragraph.innerText = summary ? summary : "Some text about this breed.";
 	paragraph.classList.add("wiki-text");
 
 	wiki_content.appendChild(paragraph);
@@ -29,12 +61,10 @@ async function create_wiki_item(container, breed) {
 
 	wiki_content.appendChild(img_container);
 
-	const url = `https://dog.ceo/api/breed/${breed}/images`;
-	const response = await (await fetch(url)).json();
+	const image_url = `https://dog.ceo/api/breed/${breed}/images`;
+	const response = await (await fetch(image_url)).json();
 	const index = Math.round(Math.random() * (response.message.length - 1));
 	const image = response.message[index];
-
-	console.log(image);
 
 	const wiki_img = document.createElement("img");
 	wiki_img.classList.add("wiki-img");
@@ -49,18 +79,24 @@ async function get_breeds() {
 	const breeds = [];
 	for (var i = 0; i < DOGS; i++) {
 		var index = Math.round(Math.random() * (response_breeds.length - 1));
-		/*console.log(index);*/
 		var breed = response_breeds[index];
 		breeds.push(breed);
 	}
-	console.log(breeds);
 	return breeds;
 }
 
-get_breeds().then((breeds) => {
+const breeds = ["dingo", "beagle", "saluki", "basenji", "briard"];
+
+for (const container of containers) {
+	for (const breed of breeds) {
+		create_wiki_item(container, breed);
+	}
+}
+
+/*get_breeds().then((breeds) => {
 	for (const container of containers) {
 		for (const breed of breeds) {
 			create_wiki_item(container, breed);
 		}
 	}
-});
+});*/
