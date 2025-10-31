@@ -61,10 +61,10 @@ async function create_wiki_item(container, breed) {
 
 	wiki_content.appendChild(img_container);
 
-	const image_url = `https://dog.ceo/api/breed/${breed}/images`;
+	const image_url = `https://dog.ceo/api/breed/${breed}/images/random`;
 	const response = await (await fetch(image_url)).json();
-	const index = Math.round(Math.random() * (response.message.length - 1));
-	const image = response.message[index];
+	/*const index = Math.round(Math.random() * (response.message.length - 1));*/
+	const image = response.message;
 
 	const wiki_img = document.createElement("img");
 	wiki_img.classList.add("wiki-img");
